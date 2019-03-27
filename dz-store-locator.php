@@ -76,7 +76,7 @@ function dz_store_location_form(){
 		'dz_pin' => !empty($_POST['dz_pin']) ? $_POST['dz_pin'] : "",
 		'dz_mobile' => !empty($_POST['dz_mobile']) ? $_POST['dz_mobile'] : "",
 		'dz_email' => !empty($_POST['dz_email']) ? $_POST['dz_email'] : "",
-		'dz_reg_no' => !empty($_POST['dz_reg_no']) ? $_POST['dz_reg_no'] : "",dz_reg_no
+		'dz_reg_no' => !empty($_POST['dz_reg_no']) ? $_POST['dz_reg_no'] : ""
 	);
 
 	$wpdb->insert($table_name, $data) ? $status = 1 : $status = 0;
@@ -91,20 +91,22 @@ function dz_activation(){
 
 	$charset_collate = $wpdb->get_charset_collate();
 
-	$sql = "CREATE TABLE $table_name (
-	  	`id` mediumint(9) NOT NULL AUTO_INCREMENT,
-	  	`dz_dealer` varchar,
-	  	`dz_dealer_name` varchar,
-	  	`dz_address` varchar,
-	  	`dz_city` varchar,
-	  	`dz_state` varchar,
-	  	`dz_pin` varchar,
-	  	`dz_mobile` varchar,
-	  	`dz_email` varchar,
-	  	`dz_reg_no` varchar,
+
+	$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+	  	id mediumint(9) NOT NULL AUTO_INCREMENT,
+	  	dz_dealer varchar(100),
+	  	dz_dealer_name varchar(50),
+	  	dz_address varchar(100),
+	  	dz_city varchar(50),
+	  	dz_state varchar(50),
+	  	dz_pin varchar(50),
+	  	dz_mobile varchar(50),
+	  	dz_email varchar(50),
+	  	dz_reg_no varchar(50),
 	  	PRIMARY KEY  (id)
 	) $charset_collate;";
 
 	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 	dbDelta( $sql );
 }
+register_activation_hook(__FILE__, "dz_activation");
