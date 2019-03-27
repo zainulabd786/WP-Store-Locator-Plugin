@@ -63,7 +63,48 @@ function dz_store_location_form(){
 	if(!current_user_can('edit_theme_options')) wp_die('You are not allowed to be on this page');
 	check_admin_referer("dz_store_location_form_verify");
 
-	
+	global $wpdb;
 
-	wp_redirect(admin_url('admin.php?page=dz_add_store_locations&status=1'));
+	$table_name = $wpdb->prefix . "dz_stores";
+
+	$data = array(
+		'dz_dealer' => !empty($_POST['dz_dealer']) ? $_POST['dz_dealer'] : "",
+		'dz_dealer_name' => !empty($_POST['dz_dealer_name']) ? $_POST['dz_dealer_name'] : "",
+		'dz_address' => !empty($_POST['dz_address']) ? $_POST['dz_address'] : "",
+		'dz_city' => !empty($_POST['dz_city']) ? $_POST['dz_city'] : "",
+		'dz_state' => !empty($_POST['dz_state']) ? $_POST['dz_state'] : "",
+		'dz_pin' => !empty($_POST['dz_pin']) ? $_POST['dz_pin'] : "",
+		'dz_mobile' => !empty($_POST['dz_mobile']) ? $_POST['dz_mobile'] : "",
+		'dz_email' => !empty($_POST['dz_email']) ? $_POST['dz_email'] : "",
+		'dz_reg_no' => !empty($_POST['dz_reg_no']) ? $_POST['dz_reg_no'] : "",dz_reg_no
+	);
+
+	$wpdb->insert($table_name, $data) ? $status = 1 : $status = 0;
+
+	wp_redirect(admin_url('admin.php?page=dz_add_store_locations&status=$status'));
+}
+
+function dz_activation(){
+	global $wpdb;
+
+	$table_name = $wpdb->prefix . "dz_stores";
+
+	$charset_collate = $wpdb->get_charset_collate();
+
+	$sql = "CREATE TABLE $table_name (
+	  	`id` mediumint(9) NOT NULL AUTO_INCREMENT,
+	  	`dz_dealer` varchar,
+	  	`dz_dealer_name` varchar,
+	  	`dz_address` varchar,
+	  	`dz_city` varchar,
+	  	`dz_state` varchar,
+	  	`dz_pin` varchar,
+	  	`dz_mobile` varchar,
+	  	`dz_email` varchar,
+	  	`dz_reg_no` varchar,
+	  	PRIMARY KEY  (id)
+	) $charset_collate;";
+
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	dbDelta( $sql );
 }
