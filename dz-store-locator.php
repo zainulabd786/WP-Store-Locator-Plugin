@@ -88,7 +88,7 @@ function dz_admin_markup(){
 /*__________________Admin Menu end___________________________*/
 
 
-/*_______________________________________CRUD________________________________________________________*/
+/*_______________________________________CRUD Functions________________________________________________________*/
 
 /*Insert*/
 add_action("admin_post_dz_store_location_form", "dz_store_location_form");
@@ -119,7 +119,7 @@ function dz_store_location_form(){
 
 
 /*retrieve*/
-function dz_get_store($args){
+function dz_get_store($args = array()){
 
 	/*
 		@param
@@ -135,7 +135,7 @@ function dz_get_store($args){
 	$sql = "SELECT * FROM $table_name WHERE 1=1 ";
 
 	foreach ($args as $key => $value) {
-		$sql .= " AND".$key."='".$value."'";
+		$sql .= " AND ".$key."='".$value."'";
 	}
 
 	$results = $wpdb->get_results($sql);
@@ -146,7 +146,7 @@ function dz_get_store($args){
 
 
 /*edit*/
-function dz_edit_store($args){
+function dz_update_store($args){
 	/*
 		@param
 			* $args -> An associative array that accepts keys similar to database table attribute names and Record id (PK)
@@ -158,6 +158,8 @@ function dz_edit_store($args){
 	global $wpdb;
 
 	$table_name = $wpdb->prefix . "dz_stores";
+
+	echo "<pre>"; print_r($args); echo "</pre>";
 
 	return $wpdb->update($table_name, $args, array('id' => $args['id'])) ? true : false;
 
@@ -175,4 +177,44 @@ function dz_delete_store($id){
 	return $wpdb->delete($table_name, array("id" => $id)) ? true : false;
 }
 
-/*_______________________________________CRUD end_______________________________________________________*/
+/*_______________________________________CRUD Functions end_______________________________________________________*/
+
+
+
+/*_________________________________CRUD Operations______________________________________*/
+/*edit*/
+add_action("admin_post_dz_store_location_edit_form", "dz_store_location_edit_form");
+function dz_store_location_edit_form(){
+	if(!current_user_can('edit_theme_options')) wp_die('You are not allowed to be on this page');
+	check_admin_referer("dz_store_location_form_verify");
+
+	$args = $_POST;
+
+	unset($args['action']);
+	unset($args['_wpnonce']);
+	unset($args['_wp_http_referer']);
+	unset($args['dz_submit']);
+
+	dz_update_store($args) ? $status = 1 : $status = 0;
+
+	wp_redirect(admin_url('admin.php?page=dz_add_store_locations&status='.$status));
+}
+/*_________________________________CRUD Operations end______________________________________*/
+
+
+
+function get_available_cities(){
+	global $wpdb;
+
+	$table_name = $wpdb->prefix . "dz_stores";
+
+	return json_encode($wpdb->get_results("SELECT DISTINCT dz_city from $table_name"));
+}
+
+function get_available_states(){
+	global $wpdb;
+
+	$table_name = $wpdb->prefix . "dz_stores";
+
+	return json_encode($wpdb->get_results("SELECT DISTINCT dz_state from $table_name"));
+}
