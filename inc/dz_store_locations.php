@@ -12,6 +12,7 @@
 				<th>Mobile</th>
 				<th>E-Mail</th>
 				<th>Registration number</th>
+				<th>action</th>
 			</tr>
 		</thead>
 
@@ -30,6 +31,7 @@
 				<th>Mobile</th>
 				<th>E-Mail</th>
 				<th>Registration number</th>
+				<th>action</th>
 			</tr>
 		</tfoot>
 	</table>	
