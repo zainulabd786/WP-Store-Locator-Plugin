@@ -114,7 +114,7 @@ function dz_store_location_form(){
 
 	$wpdb->insert($table_name, $data) ? $status = 1 : $status = 0;
 
-	wp_redirect(admin_url('admin.php?page=dz_add_store_locations&status=$status'));
+	wp_redirect(admin_url('admin.php?page=dz_add_store_locations&status='.$status));
 }
 
 
@@ -155,7 +155,7 @@ function dz_edit_store($args){
 
 	if(!is_array($args) || !isset($args['id']) || empty($args['id'])) return;
 
-	global $wpdb
+	global $wpdb;
 
 	$table_name = $wpdb->prefix . "dz_stores";
 
@@ -168,11 +168,11 @@ function dz_edit_store($args){
 function dz_delete_store($id){
 	if(empty($id)) return;
 
-	global $wpdb
+	global $wpdb;
 
 	$table_name = $wpdb->prefix . "dz_stores";
  
-	return $wpdb->delete($table_name, arra("id" => $id)) ? true : false;
+	return $wpdb->delete($table_name, array("id" => $id)) ? true : false;
 }
 
 /*_______________________________________CRUD end_______________________________________________________*/

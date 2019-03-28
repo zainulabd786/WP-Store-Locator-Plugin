@@ -1,5 +1,10 @@
 <div class="wrap">
-	<h1><?= get_admin_page_title() ?></h1>
+	<h1><?= get_admin_page_title() ?></h1><?php
+	if(isset($_GET['status']) && $_GET['status'] == 1){ ?>
+		<div style="padding: 10px;" class="notice notice-success is-dismissible">Data Successfully Saved!</div><?php
+	} else{ ?>
+		<div style="padding: 10px;" class="notice notice-error is-dismissible">Error Saving your data!</div><?php
+	} ?>
 	<form action="admin-post.php" method="post">
 		<input type="hidden" name="action" value="dz_store_location_form">
 		<?php wp_nonce_field("dz_store_location_form_verify"); ?>
