@@ -33,7 +33,23 @@ function dz_admin_scripts(){
     wp_enqueue_script("dz_jquery");
     wp_enqueue_script("dz_datatables-js");
     wp_enqueue_script("dz_custom-js");
+
+    wp_localize_script( 'dz_custom-js', 'script_data', array("is_admin" => true) );
 }
+
+add_action( 'wp_enqueue_scripts', 'dz_scripts' );
+function dz_scripts(){
+	if(!is_page('locate-us')) return;
+
+	wp_register_script("dz_custom-js", plugins_url("js/custom.js", __FILE__ ), array("jquery"), "", true);
+	wp_register_style( 'dz_bootstrap-css', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css' );
+
+	wp_enqueue_script("dz_custom-js");
+	wp_enqueue_style( 'dz_bootstrap-css' );
+
+	wp_localize_script( 'dz_custom-js', 'script_data', array("ajax_url" => admin_url( 'admin-ajax.php' ), "is_admin" => false) );
+}
+
 
 /*_______________________________ Plgin Activation__________________________________*/
 
@@ -61,6 +77,19 @@ function dz_activation(){
 
 	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 	dbDelta( $sql );
+
+	if(get_page_by_title( 'Locate Us' ) == NULL){
+		$post_details = array(
+		  'post_title'    => 'Locate Us',
+		  'post_name'	  => 'locate-us',
+		  'post_content'  => '[render_store_locator]',
+		  'post_status'   => 'publish',
+		  'post_author'   => 1,
+		  'post_type' => 'page'
+	    );
+	   wp_insert_post( $post_details );
+	}
+    
 }
 register_activation_hook(__FILE__, "dz_activation");
 
@@ -203,12 +232,12 @@ function dz_store_location_edit_form(){
 
 
 
-function get_available_cities(){
+function get_available_cities($state){
 	global $wpdb;
 
 	$table_name = $wpdb->prefix . "dz_stores";
 
-	return json_encode($wpdb->get_results("SELECT DISTINCT dz_city from $table_name"));
+	return json_encode($wpdb->get_results("SELECT DISTINCT dz_city from $table_name WHERE dz_state='$state'"));
 }
 
 function get_available_states(){
@@ -218,3 +247,60 @@ function get_available_states(){
 
 	return json_encode($wpdb->get_results("SELECT DISTINCT dz_state from $table_name"));
 }
+
+
+/*________________________________________________Front-end______________________________________________*/
+function render_store_locator($atts){
+	ob_start();
+	$states = json_decode(get_available_states()); ?>
+
+	<div class="dz_locate_wrap">
+		<div class="row">
+			<div class="col-md-6">
+				<form class="form-vertical">
+					<div class="form-group">
+						<select id="wp_dz_state" name="dz_state" class="form-control">
+							<option>Select your State</option> <?php
+							foreach ($states as $state) { ?>
+								<option value="<?= $state->dz_state ?>"><?= $state->dz_state ?></option><?php
+							} ?>
+						</select>
+					</div>
+					<div class="form-group">
+						<select name="dz_city" id="wp_dz_city" class="form-control">
+							<option>Select your City</option>
+						</select>
+					</div>
+				</form>
+			</div>
+			<div class="col-md-6">
+				<div id="wp_dz_display_store"></div>
+			</div>
+		</div>
+	</div><?php
+
+	return ob_get_clean();
+}
+add_shortcode("render_store_locator", "render_store_locator");
+/*________________________________________________Front-end ends______________________________________________*/
+
+
+/*______________________________________________________AJAX Functions________________________________________*/
+add_action("wp_ajax_dz_get_cities", "dz_get_cities");
+add_action("wp_ajax_nopriv_dz_get_cities", "dz_get_cities");
+function dz_get_cities(){
+	echo get_available_cities($_GET['state']);
+	wp_die();
+}
+
+add_action("wp_ajax_get_store_data", "get_store_data");
+add_action("wp_ajax_nopriv_get_store_data", "get_store_data");
+function get_store_data(){
+
+	print_r($_GET['data']);
+
+	//dz_get_store($args);
+
+	wp_die();
+}
+/*______________________________________________________AJAX Functions end________________________________________*/
