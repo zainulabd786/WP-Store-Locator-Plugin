@@ -256,7 +256,7 @@ function render_store_locator($atts){
 
 	<div class="dz_locate_wrap">
 		<div class="row">
-			<div class="col-md-6">
+			<div class="col-md-4">
 				<form class="form-vertical">
 					<div class="form-group">
 						<select id="wp_dz_state" name="dz_state" class="form-control">
@@ -273,7 +273,7 @@ function render_store_locator($atts){
 					</div>
 				</form>
 			</div>
-			<div class="col-md-6">
+			<div class="col-md-8">
 				<div id="wp_dz_display_store"></div>
 			</div>
 		</div>
@@ -297,9 +297,7 @@ add_action("wp_ajax_get_store_data", "get_store_data");
 add_action("wp_ajax_nopriv_get_store_data", "get_store_data");
 function get_store_data(){
 
-	print_r($_GET['data']);
-
-	//dz_get_store($args);
+	echo dz_get_store($_GET['params']);
 
 	wp_die();
 }
