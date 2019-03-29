@@ -10,10 +10,10 @@ jQuery(document).ready(function($){
 	})
 
 	$("#wp_dz_city").change(function(){
+		$("#searching-gif").removeClass("d-none").addClass("d-flex");
 		let data = {"dz_state": $("#wp_dz_state").val(), "dz_city" : $("#wp_dz_city").val()}
 		$.get(script_data.ajax_url, {action: "get_store_data", params: data}, resp => {
 			resp = JSON.parse(resp)[0];
-			//console.log(resp);
 			let markup = "";
 			markup += `
 				<div class="jumbotron">
@@ -28,7 +28,11 @@ jQuery(document).ready(function($){
 				  
 				</div>
 			`;
-			$("#wp_dz_display_store").html(markup);
+			setTimeout(()=>{
+				$("#searching-gif").removeClass("d-flex").addClass("d-none");
+				$("#wp_dz_display_store").html(markup);
+			}, 2000);
+			
 		} );
 	})
 })

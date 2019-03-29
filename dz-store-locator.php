@@ -274,6 +274,9 @@ function render_store_locator($atts){
 				</form>
 			</div>
 			<div class="col-md-8">
+				<div id="searching-gif" class="d-none justify-content-center align-items-center">
+					<img src="<?= plugins_url('DZ-store-locator/images/searching.gif') ?>">
+				</div>
 				<div id="wp_dz_display_store"></div>
 			</div>
 		</div>
