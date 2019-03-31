@@ -13,21 +13,24 @@ jQuery(document).ready(function($){
 		$("#searching-gif").removeClass("d-none").addClass("d-flex");
 		let data = {"dz_state": $("#wp_dz_state").val(), "dz_city" : $("#wp_dz_city").val()}
 		$.get(script_data.ajax_url, {action: "get_store_data", params: data}, resp => {
-			resp = JSON.parse(resp)[0];
+			resp = JSON.parse(resp);
 			let markup = "";
-			markup += `
-				<div class="jumbotron">
-				  <h1 class="display-4">${resp.dz_dealer}</h1>
-				  <p class="lead">${resp.dz_address}, ${resp.dz_city}, ${resp.dz_state}, ${resp.dz_pin}</p>
-				  <hr class="my-4">
-				  <p>
-				  	<strong>Email:</strong> ${resp.dz_email}<br/>
-				  	<strong>Mobile:</strong> ${resp.dz_mobile}<br/>
-				  	<strong>GST:</strong> ${resp.dz_reg_no}<br/>
-				  </p>
-				  
-				</div>
-			`;
+
+			resp.forEach(resp => {
+				markup += `
+					<div class="jumbotron">
+					  <h1 class="display-4">${resp.dz_dealer}</h1>
+					  <p class="lead">${resp.dz_address}, ${resp.dz_city}, ${resp.dz_state}, ${resp.dz_pin}</p>
+					  <hr class="my-4">
+					  <p>
+					  	<strong>Email:</strong> ${resp.dz_email}<br/>
+					  	<strong>Mobile:</strong> ${resp.dz_mobile}<br/>
+					  	<strong>GST:</strong> ${resp.dz_reg_no}<br/>
+					  </p>
+					  
+					</div>
+				`;
+			})
 			setTimeout(()=>{
 				$("#searching-gif").removeClass("d-flex").addClass("d-none");
 				$("#wp_dz_display_store").html(markup);
