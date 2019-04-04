@@ -35,12 +35,18 @@
 
 		<div class="form-group">
 			<label for="dz_city">City</label>
-			<input type="text" class="form-control" name="dz_city" id="dz_city" value="<?= (!empty($data->dz_city)) ? $data->dz_city : '' ?>">
+			<input type="text" class="form-control suggest" name="dz_city" id="dz_city" list="dz_city_datalist" value="<?= (!empty($data->dz_city)) ? $data->dz_city : '' ?>">
+			<datalist id="dz_city_datalist">
+				
+			</datalist>
 		</div>
 
 		<div class="form-group">
 			<label for="dz_state">State</label>
-			<input type="text" class="form-control" name="dz_state" id="dz_state" value="<?= (!empty($data->dz_state)) ? $data->dz_state : '' ?>">
+			<input type="text" class="form-control suggest" name="dz_state" id="dz_state" list="dz_state_datalist" value="<?= (!empty($data->dz_state)) ? $data->dz_state : '' ?>">
+			<datalist id="dz_state_datalist">
+				
+			</datalist>
 		</div>
 
 		<div class="form-group">

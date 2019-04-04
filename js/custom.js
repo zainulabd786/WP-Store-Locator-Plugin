@@ -1,6 +1,30 @@
 jQuery(document).ready(function($){
 	script_data.is_admin && $("#locations_table").DataTable();
 
+	if(script_data.is_admin){
+		$(".suggest").keyup(function(){
+			let listName = $(this).attr('list');
+			let name = $(this).attr('name');
+			let markup = "";
+			let data = {
+				action: "dz_get_suggestions_data",
+				name: name,
+				val: $(this).val()
+			}
+			$.get(script_data.ajax_url, {
+				action: "dz_get_suggestions_data",
+				name: $(this).attr('name'),
+				val: $(this).val()
+			}, resp => {
+				resp = JSON.parse(resp);
+				resp.forEach( resp => {
+					markup += `<option value="${resp[name]}">`
+				})
+				$(`#${listName}`).html(markup);
+			})
+		})
+	}
+
 	$("#wp_dz_state").change(function(){
 		$("#wp_dz_city").html("<option>Select your City</option>");
 		$.get(script_data.ajax_url, {action: 'dz_get_cities', state: $(this).val()}, resp => {
@@ -38,4 +62,6 @@ jQuery(document).ready(function($){
 			
 		} );
 	})
+
+
 })

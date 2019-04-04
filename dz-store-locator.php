@@ -34,7 +34,7 @@ function dz_admin_scripts(){
     wp_enqueue_script("dz_datatables-js");
     wp_enqueue_script("dz_custom-js");
 
-    wp_localize_script( 'dz_custom-js', 'script_data', array("is_admin" => true) );
+    wp_localize_script( 'dz_custom-js', 'script_data', array("ajax_url" => admin_url( 'admin-ajax.php' ), "is_admin" => true) );
 }
 
 add_action( 'wp_enqueue_scripts', 'dz_scripts' );
@@ -292,7 +292,9 @@ add_shortcode("render_store_locator", "render_store_locator");
 add_action("wp_ajax_dz_get_cities", "dz_get_cities");
 add_action("wp_ajax_nopriv_dz_get_cities", "dz_get_cities");
 function dz_get_cities(){
+
 	echo get_available_cities($_GET['state']);
+
 	wp_die();
 }
 
@@ -301,6 +303,24 @@ add_action("wp_ajax_nopriv_get_store_data", "get_store_data");
 function get_store_data(){
 
 	echo dz_get_store($_GET['params']);
+
+	wp_die();
+}
+
+add_action("wp_ajax_dz_get_suggestions_data", "dz_get_suggestions_data");
+add_action("wp_ajax_nopriv_dz_get_suggestions_data", "dz_get_suggestions_data");
+function dz_get_suggestions_data(){
+	global $wpdb;
+
+	$table_name = $wpdb->prefix . "dz_stores";
+
+	$field_name = $_GET['name'];
+
+	$val = $_GET['val'];
+
+	$sql = "SELECT $field_name FROM $table_name WHERE $field_name LIKE '%$val%' ";
+
+	echo json_encode($wpdb->get_results($sql));
 
 	wp_die();
 }
